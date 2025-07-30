@@ -19,24 +19,24 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 function AddNewSessionDialog() {
-  const [note, setNote] = useState<string>("");
+  const [note, setNote] = useState<string>(""); // Initialize as empty string
   const [loading, setLoading] = useState(false);
   const [suggestedDoctors, setSuggestedDoctors] = useState<DoctorAgent[]>();
 
-  const OnClickNext = async () => {
+  const handleNextClick = async () => {
+    if (!note.trim()) return;
     setLoading(true);
     try {
-      const result = await axios.post("/api/suggest-doctors", {
+      const { data } = await axios.post("/api/suggest-doctors", {
         notes: note,
       });
+      console.log("✅ Doctor Suggestions:", data);
 
-      console.log("✅ Doctor Suggestions:", result.data);
-      setSuggestedDoctors(result.data);
+      // Fix: API returns data with "message" property containing the doctor array
+      setSuggestedDoctors(data.message); // Use data.message instead of data
+
       toast.success("Doctor suggestions loaded!");
-
-      // ✅ Play sound here
-      const audio = new Audio("/success.wav");
-      audio.play();
+      new Audio("/success.wav").play();
     } catch (error) {
       console.error("❌ API Error:", error);
       toast.error("Failed to get suggestions. Please try again later.");
@@ -67,49 +67,43 @@ function AddNewSessionDialog() {
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Basic Details</DialogTitle>
-          <DialogDescription asChild>
-            {!suggestedDoctors ? (
-              <div>
-                <h2 className="text-sm text-muted-foreground">
-                  Please describe your symptoms or relevant information to get
-                  matched with a doctor.
-                </h2>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold mb-2">
-                  Suggested Doctors:
-                </h3>
-
-                {suggestedDoctors && suggestedDoctors.length > 0 ? (
-                  suggestedDoctors.map((doctor) => (
-                    <DoctorAgentCard key={doctor.id} doctorAgent={doctor} />
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No suggestions found.
-                  </p>
-                )}
-              </div>
-            )}
+          <DialogTitle>
+            {suggestedDoctors ? "Suggested Doctors" : "Add Basic Details"}
+          </DialogTitle>
+          <DialogDescription>
+            {suggestedDoctors
+              ? "Choose a doctor to start your consultation"
+              : "Add your symptoms to find the right specialist"}
           </DialogDescription>
         </DialogHeader>
 
-        {!suggestedDoctors && (
+        {/* MAIN CONTENT AREA */}
+        {!suggestedDoctors ? (
           <div className="mt-4">
             <Textarea
-              placeholder="e.g., I’ve had a fever for 3 days, sore throat, and fatigue."
+              placeholder="e.g., I've had a fever for 3 days, sore throat, and fatigue."
               className="h-[200px]"
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            {suggestedDoctors.length > 0 ? (
+              suggestedDoctors.map((doctor, index) => (
+                <DoctorAgentCard key={index} doctorAgent={doctor} />
+              ))
+            ) : (
+              <p className="col-span-3 text-center py-4 text-muted-foreground">
+                No doctors found for your symptoms
+              </p>
+            )}
+          </div>
         )}
 
-        <DialogFooter>
+        <DialogFooter className="mt-4">
           <DialogClose asChild>
-            <Button className="rounded-xl" type="button" variant="outline">
+            <Button type="button" variant="outline" className="rounded-xl">
               Cancel
             </Button>
           </DialogClose>
@@ -118,7 +112,7 @@ function AddNewSessionDialog() {
             <Button
               type="button"
               disabled={!note.trim() || loading}
-              onClick={OnClickNext}
+              onClick={handleNextClick} // Fix: Remove parentheses ()
               className="flex items-center gap-2 rounded-xl"
             >
               {loading ? (
