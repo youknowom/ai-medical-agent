@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import openai from "@/config/OpenAiModel";
 import { AIDoctorAgents } from "@/shared/list";
 
@@ -18,5 +18,9 @@ export async function POST(req: NextRequest) {
         },
       ],
     });
-  } catch (e) {}
+    const raeResp = completion.choices[0].message;
+    return NextResponse.json(raeResp);
+  } catch (e) {
+    return NextResponse.json(e);
+  }
 }
