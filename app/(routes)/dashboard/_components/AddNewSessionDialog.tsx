@@ -18,14 +18,22 @@ import axios from "axios";
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
   const OnClickNext = async () => {
     setLoading(true);
-    const result = await axios.post("/api/suggest-doctors", {
-      notes: note,
-    });
-    console.log(result.data);
-    setLoading(false);
+    try {
+      const result = await axios.post("/api/suggest-doctors", {
+        notes: note,
+      });
+
+      console.log("✅ Doctor Suggestions:", result.data); // This will show result
+    } catch (error) {
+      console.error("❌ API Error:", error); // This will show if there's a backend error
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
