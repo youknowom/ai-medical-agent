@@ -7,7 +7,7 @@ import { currentUser } from "@clerk/nextjs/server";
 export async function POST(req: NextRequest) {
   const { notes, selectedDoctor } = await req.json();
   const user = await currentUser();
-
+  //31.36
   try {
     const sessionId = uuid();
     const result = await db
