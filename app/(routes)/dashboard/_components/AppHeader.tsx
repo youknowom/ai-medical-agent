@@ -11,7 +11,7 @@ const menuOptions = [
 
 function AppHeader() {
   return (
-    <div className="flex items-center justify-between p-4 shadow px-6 md:px-20 lg:px-40">
+    <div className="flex items-center justify-between px-4 shadow-sm md:px-10 lg:px-20 bg-white">
       <div className="relative w-[120px] md:w-[180px] aspect-[2/1]">
         <Image
           src="/logo.svg"
