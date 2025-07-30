@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, json, text, varchar } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -10,4 +10,9 @@ export const usersTable = pgTable("users", {
 export const SessionChatTable = pgTable("sessionChatTable", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   sessionId: varchar().notNull(),
+  notes: text(),
+  conversation: json(),
+  report: json(),
+  createdBy: varchar().references(() => usersTable.email),
+  crearedOn: varchar(),
 });
