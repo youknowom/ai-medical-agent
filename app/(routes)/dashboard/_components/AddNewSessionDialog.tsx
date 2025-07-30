@@ -17,11 +17,13 @@ import axios from "axios";
 import DoctorAgentCard, { DoctorAgent } from "./DoctorAgentCard";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import SuggestedDoctorCard from "./SuggestedDoctorCard";
 
 function AddNewSessionDialog() {
-  const [note, setNote] = useState<string>(""); // Initialize as empty string
+  const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [suggestedDoctors, setSuggestedDoctors] = useState<DoctorAgent[]>();
+  const [selectedDoctor, setSelectedDoctor] = useState<DoctorAgent>();
 
   const handleNextClick = async () => {
     if (!note.trim()) return;
@@ -32,8 +34,7 @@ function AddNewSessionDialog() {
       });
       console.log("✅ Doctor Suggestions:", data);
 
-      // Fix: API returns data with "message" property containing the doctor array
-      setSuggestedDoctors(data.message); // Use data.message instead of data
+      setSuggestedDoctors(data.message);
 
       toast.success("Doctor suggestions loaded!");
       new Audio("/success.wav").play();
@@ -51,6 +52,10 @@ function AddNewSessionDialog() {
       setSuggestedDoctors(undefined);
       setLoading(false);
     }
+  };
+
+  const onStartConsultation = () => {
+    //save all info to data
   };
 
   return (
@@ -88,10 +93,14 @@ function AddNewSessionDialog() {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-3 gap-5">
             {suggestedDoctors.length > 0 ? (
               suggestedDoctors.map((doctor, index) => (
-                <DoctorAgentCard key={index} doctorAgent={doctor} />
+                <SuggestedDoctorCard
+                  doctorAgent={doctor}
+                  key={index}
+                  setSelectedDoctor={() => setSelectedDoctor(doctor)}
+                />
               ))
             ) : (
               <p className="col-span-3 text-center py-4 text-muted-foreground">
@@ -129,6 +138,7 @@ function AddNewSessionDialog() {
             </Button>
           ) : (
             <Button
+              onClick={() => onStartConsultation()}
               type="button"
               className="flex items-center gap-2 rounded-xl group bg-green-600 hover:bg-green-700 text-white"
             >
