@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { IconPlus } from "@tabler/icons-react";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -17,7 +18,17 @@ const HistoryList = () => {
           />
           <h2 className="font-bold text-xl mt-5">No Recent Consultations</h2>
           <p>It looks like you haven't consulted with any doctors yet.</p>
-          <Button className="mt-3">+ Start a Consultation</Button>
+          {/* <Button className="mt-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition">
+            + Start a Consultation
+          </Button> */}
+
+          <Button className="mt-4 flex items-center justify-center gap-2 rounded-xl group bg-primary text-white hover:bg-primary/90 transition-all">
+            <IconPlus
+              size={18}
+              className="transition-transform duration-200 group-hover:rotate-90"
+            />
+            <span className="font-medium">Start a Consultation</span>
+          </Button>
         </div>
       ) : (
         <div>List</div>
