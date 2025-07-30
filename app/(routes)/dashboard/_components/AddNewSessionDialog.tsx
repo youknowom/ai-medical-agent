@@ -55,7 +55,7 @@ function AddNewSessionDialog() {
   };
 
   const onStartConsultation = () => {
-    //save all info to data
+    //save all info to database
   };
 
   return (

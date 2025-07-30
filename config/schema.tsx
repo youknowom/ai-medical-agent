@@ -11,6 +11,7 @@ export const SessionChatTable = pgTable("sessionChatTable", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   sessionId: varchar().notNull(),
   notes: text(),
+  selectedDoctor: json(),
   conversation: json(),
   report: json(),
   createdBy: varchar().references(() => usersTable.email),
