@@ -112,7 +112,7 @@ function AddNewSessionDialog() {
             <Button
               type="button"
               disabled={!note.trim() || loading}
-              onClick={handleNextClick} // Fix: Remove parentheses ()
+              onClick={handleNextClick}
               className="flex items-center gap-2 rounded-xl"
             >
               {loading ? (
