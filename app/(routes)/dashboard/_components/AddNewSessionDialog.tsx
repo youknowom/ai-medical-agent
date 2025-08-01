@@ -18,13 +18,14 @@ import DoctorAgentCard, { DoctorAgent } from "./DoctorAgentCard";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
+import { useRouter } from "next/navigation";
 
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [suggestedDoctors, setSuggestedDoctors] = useState<DoctorAgent[]>();
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorAgent>();
-
+  const router = useRouter();
   const handleNextClick = async () => {
     if (!note.trim()) return;
     setLoading(true);
@@ -54,10 +55,88 @@ function AddNewSessionDialog() {
     }
   };
 
-  const onStartConsultation = () => {
-    //save all info to database
-  };
+  // const onStartConsultation = async () => {
+  //   setLoading(true);
+  //   //save all info to database
+  //   const result = await axios.post("/api/session-chat", {
+  //     notes: note,
+  //     selectedDoctor: selectedDoctor,
+  //   });
+  //   console.log(result.data);
+  //   if (result.data?.sessionId) {
+  //     console.log(result.data.sessionId);
+  //     //Route New Convo screen
+  //     console.log("🔁 Redirecting to sessionId route:", result.data.sessionId);
+  //     router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
+  //   }
+  //   setLoading(false);
+  // };
+  // const onStartConsultation = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await axios.post("/api/session-chat", {
+  //       notes: note,
+  //       selectedDoctor: selectedDoctor,
+  //     });
 
+  //     const sessionId = result?.data?.sessionId;
+
+  //     if (sessionId) {
+  //       console.log("🔁 Redirecting to sessionId route:", sessionId);
+  //       // Add slight delay before pushing
+  //       setTimeout(() => {
+  //         router.push(`/dashboard/medical-agent/${sessionId}`);
+  //       }, 100);
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ Failed to start session:", error);
+  //     toast.error("Something went wrong starting the session.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // const onStartConsultation = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const result = await axios.post("/api/session-chat", {
+  //       notes: note,
+  //       selectedDoctor: selectedDoctor,
+  //     });
+
+  //     if (result.data?.sessionId) {
+  //       router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
+  //     } else {
+  //       throw new Error("No session ID returned");
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ Failed to start session:", error);
+  //     toast.error("Something went wrong starting the session.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const onStartConsultation = async () => {
+    setLoading(true);
+    try {
+      const result = await axios.post("/api/session-chat", {
+        notes: note,
+        selectedDoctor: selectedDoctor,
+      });
+
+      if (!result.data?.sessionId) {
+        throw new Error("No session ID returned");
+      }
+
+      // Redirect to the new session
+      router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
+    } catch (error) {
+      console.error("❌ Failed to start session:", error);
+      toast.error("Failed to start session. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Dialog onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
@@ -100,6 +179,8 @@ function AddNewSessionDialog() {
                   doctorAgent={doctor}
                   key={index}
                   setSelectedDoctor={() => setSelectedDoctor(doctor)}
+                  //@ts-ignore
+                  selectedDoctor={selectedDoctor}
                 />
               ))
             ) : (
@@ -111,11 +192,14 @@ function AddNewSessionDialog() {
         )}
 
         <DialogFooter className="mt-4">
-          <DialogClose asChild>
-            <Button type="button" variant="outline" className="rounded-xl">
-              Cancel
-            </Button>
-          </DialogClose>
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-xl"
+            onClick={() => handleDialogClose(false)}
+          >
+            Cancel
+          </Button>
 
           {!suggestedDoctors ? (
             <Button
@@ -138,12 +222,17 @@ function AddNewSessionDialog() {
             </Button>
           ) : (
             <Button
-              onClick={() => onStartConsultation()}
+              onClick={onStartConsultation}
               type="button"
-              className="flex items-center gap-2 rounded-xl group bg-green-600 hover:bg-green-700 text-white"
+              disabled={!selectedDoctor || loading}
+              className="flex items-center gap-2 rounded-xl group bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>Start Consultation</span>
-              <IconArrowRight className="transition-transform duration-200 group-hover:translate-x-1" />
+              {loading ? (
+                <Loader2 className="animate-spin w-4 h-4" />
+              ) : (
+                <IconArrowRight className="transition-transform duration-200 group-hover:translate-x-1" />
+              )}
             </Button>
           )}
         </DialogFooter>
