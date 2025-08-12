@@ -8,6 +8,7 @@ export type DoctorAgent = {
   specialist: string;
   description: string;
   image: string;
+  voiceId?: string;
   agentPrompt: string;
 };
 
