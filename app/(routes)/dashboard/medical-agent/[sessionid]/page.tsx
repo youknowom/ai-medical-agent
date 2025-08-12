@@ -4,11 +4,11 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { DoctorAgent } from "../../_components/DoctorAgentCard";
 import Vapi from "@vapi-ai/web";
-import { Circle, PhoneCall, PhoneOff } from "lucide-react";
+import { Circle, PhoneCall, PhoneOff, RotateCcw } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-type SessionDetail = {
+export type SessionDetail = {
   id: number;
   notes: string;
   sessionId: string;
@@ -28,6 +28,7 @@ function MedicalVoiceAgentPage() {
 
   const [sessionDetails, setSessionDetails] = useState<SessionDetail>();
   const [callStarted, setCallStarted] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [vapiInstance, setVapiInstance] = useState<any>(null);
   const [currentRole, setCurrentRole] = useState<string | null>(null);
@@ -38,6 +39,7 @@ function MedicalVoiceAgentPage() {
   const [error, setError] = useState<string | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
   const callStartSound = useRef<HTMLAudioElement | null>(null);
   const callEndSound = useRef<HTMLAudioElement | null>(null);
 
@@ -59,6 +61,13 @@ function MedicalVoiceAgentPage() {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [sessionId]);
+
+  useEffect(() => {
+    chatRef.current?.scrollTo({
+      top: chatRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, liveTranscript]);
 
   const getSessionDetails = async () => {
     try {
@@ -84,16 +93,24 @@ function MedicalVoiceAgentPage() {
     return `${min}:${sec}`;
   };
 
+  const getStatusColor = () => {
+    if (isConnecting) return "bg-yellow-500";
+    if (callStarted) return "bg-green-500";
+    return "bg-red-500";
+  };
+
   const startCall = async () => {
     if (!process.env.NEXT_PUBLIC_VAPI_API_KEY) {
       setError("API key is missing.");
       return;
     }
+    setIsConnecting(true);
+    setMessages([]);
+    setLiveTranscript("");
 
     const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY);
     setVapiInstance(vapi);
 
-    // Log voiceId for debugging
     console.log("🧠 Using voiceId:", sessionDetails?.selectedDoctor?.voiceId);
 
     const VapiAgentConfig = {
@@ -105,12 +122,11 @@ function MedicalVoiceAgentPage() {
       },
       voice: {
         provider: "vapi",
-        voiceId: "will", // ✅ Hardcoded for testing; replace later with dynamic voiceId
-        // voiceId: sessionDetails?.selectedDoctor?.voiceId,
+        voiceId: sessionDetails?.selectedDoctor?.voiceId || "Elliot",
       },
       model: {
         provider: "openai",
-        model: "gpt-4",
+        model: "gpt-5",
         messages: [
           {
             role: "system",
@@ -127,6 +143,7 @@ function MedicalVoiceAgentPage() {
         callStartSound.current?.play();
         setCallStarted(true);
         setCallEnded(false);
+        setIsConnecting(false);
         setError(null);
         timerRef.current = setInterval(() => {
           setCallDuration((prev) => prev + 1);
@@ -137,6 +154,7 @@ function MedicalVoiceAgentPage() {
         callEndSound.current?.play();
         setCallStarted(false);
         setCallEnded(true);
+        setIsConnecting(false);
         if (timerRef.current) clearInterval(timerRef.current);
         setTimeout(() => setCallEnded(false), 2000);
       });
@@ -160,14 +178,17 @@ function MedicalVoiceAgentPage() {
       vapi.on("error", (error: any) => {
         console.error("Call error:", error);
         setError(`Call failed: ${error.message || "Unknown error"}`);
+        setIsConnecting(false);
         endCall();
       });
+
       //@ts-ignore
       const call = await vapi.start(VapiAgentConfig);
       if (!call) throw new Error("Failed to initialize call");
     } catch (error: any) {
       console.error("Error during call start:", error);
       setError(`Failed to start call: ${error.message || "Unknown error"}`);
+      setIsConnecting(false);
       endCall();
     }
   };
@@ -201,9 +222,14 @@ function MedicalVoiceAgentPage() {
 
   if (error) {
     return (
-      <div className="p-5 rounded-3xl bg-gray border">
+      <div className="p-5 rounded-3xl bg-gray border text-center">
         <div className="text-red-500 mb-4">{error}</div>
-        <Button onClick={getSessionDetails}>Retry</Button>
+        <Button onClick={getSessionDetails} className="mr-2">
+          Retry Fetch
+        </Button>
+        <Button onClick={startCall} variant="outline">
+          <RotateCcw className="mr-1" /> Retry Call
+        </Button>
       </div>
     );
   }
@@ -220,12 +246,12 @@ function MedicalVoiceAgentPage() {
       <div className="relative z-10">
         <div className="flex justify-between items-center">
           <h2 className="p-1 px-2 border rounded-md flex gap-2 items-center">
-            <Circle
-              className={`h-4 w-4 rounded-full ${
-                callStarted ? "bg-green-500" : "bg-red-500"
-              }`}
-            />
-            {callStarted ? "Connected" : "Not Connected"}
+            <Circle className={`h-4 w-4 rounded-full ${getStatusColor()}`} />
+            {isConnecting
+              ? "Connecting..."
+              : callStarted
+              ? "Connected"
+              : "Not Connected"}
           </h2>
           <h2 className="font-bold text-xl text-gray-400">
             {formatTime(callDuration)}
@@ -247,7 +273,10 @@ function MedicalVoiceAgentPage() {
             </h2>
             <p className="text-sm text-gray-400">AI Medical Doctor</p>
 
-            <div className="mt-12 px-4 w-full h-[260px] md:h-[300px] flex flex-col justify-end overflow-hidden border rounded-xl bg-white text-black">
+            <div
+              ref={chatRef}
+              className="mt-12 px-4 w-full h-[260px] md:h-[300px] flex flex-col justify-end overflow-y-auto border rounded-xl bg-white text-black"
+            >
               {messages.slice(-4).map((msg, index) => (
                 <div
                   key={index}
@@ -281,10 +310,10 @@ function MedicalVoiceAgentPage() {
               <Button
                 className="mt-10 cursor-pointer"
                 onClick={startCall}
-                disabled={isLoading}
+                disabled={isLoading || isConnecting}
               >
                 <PhoneCall className="mr-2 animate-pulse" />
-                Start Call
+                {isConnecting ? "Starting..." : "Start Call"}
               </Button>
             ) : (
               <Button

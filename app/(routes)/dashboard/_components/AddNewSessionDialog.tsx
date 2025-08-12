@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,8 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { SessionDetail } from "../medical-agent/[sessionId]/page";
 
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>("");
@@ -26,6 +28,10 @@ function AddNewSessionDialog() {
   const [suggestedDoctors, setSuggestedDoctors] = useState<DoctorAgent[]>();
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorAgent>();
   const router = useRouter();
+  const [historyList, setHistoryList] = useState<SessionDetail[]>([]);
+  const { has } = useAuth();
+  //@ts-ignore
+  const paidUser = has && has({ plan: "pro" });
   const handleNextClick = async () => {
     if (!note.trim()) return;
     setLoading(true);
@@ -34,14 +40,15 @@ function AddNewSessionDialog() {
         notes: note,
       });
       console.log("✅ Doctor Suggestions:", data);
-
       setSuggestedDoctors(data.message);
-
       toast.success("Doctor suggestions loaded!");
       new Audio("/success.wav").play();
-    } catch (error) {
-      console.error("❌ API Error:", error);
-      toast.error("Failed to get suggestions. Please try again later.");
+    } catch (error: any) {
+      console.error("❌ API Error:", error.response || error.message);
+      toast.error(
+        error.response?.data?.error ||
+          "Failed to get suggestions. Please try again later."
+      );
     } finally {
       setLoading(false);
     }
@@ -54,68 +61,6 @@ function AddNewSessionDialog() {
       setLoading(false);
     }
   };
-
-  // const onStartConsultation = async () => {
-  //   setLoading(true);
-  //   //save all info to database
-  //   const result = await axios.post("/api/session-chat", {
-  //     notes: note,
-  //     selectedDoctor: selectedDoctor,
-  //   });
-  //   console.log(result.data);
-  //   if (result.data?.sessionId) {
-  //     console.log(result.data.sessionId);
-  //     //Route New Convo screen
-  //     console.log("🔁 Redirecting to sessionId route:", result.data.sessionId);
-  //     router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
-  //   }
-  //   setLoading(false);
-  // };
-  // const onStartConsultation = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await axios.post("/api/session-chat", {
-  //       notes: note,
-  //       selectedDoctor: selectedDoctor,
-  //     });
-
-  //     const sessionId = result?.data?.sessionId;
-
-  //     if (sessionId) {
-  //       console.log("🔁 Redirecting to sessionId route:", sessionId);
-  //       // Add slight delay before pushing
-  //       setTimeout(() => {
-  //         router.push(`/dashboard/medical-agent/${sessionId}`);
-  //       }, 100);
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ Failed to start session:", error);
-  //     toast.error("Something went wrong starting the session.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // const onStartConsultation = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const result = await axios.post("/api/session-chat", {
-  //       notes: note,
-  //       selectedDoctor: selectedDoctor,
-  //     });
-
-  //     if (result.data?.sessionId) {
-  //       router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
-  //     } else {
-  //       throw new Error("No session ID returned");
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ Failed to start session:", error);
-  //     toast.error("Something went wrong starting the session.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const onStartConsultation = async () => {
     setLoading(true);
     try {
@@ -137,10 +82,26 @@ function AddNewSessionDialog() {
       setLoading(false);
     }
   };
+  const getHistoryList = async () => {
+    try {
+      const result = await axios.get("/api/session-chat?sessionId=all");
+      console.log(result.data);
+      setHistoryList(result.data);
+    } catch (error) {
+      console.error("Failed to fetch history list", error);
+    }
+  };
+
+  useEffect(() => {
+    getHistoryList();
+  }, []);
   return (
     <Dialog onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
-        <Button className="mt-4 flex items-center justify-center gap-2 rounded-xl group bg-primary text-white hover:bg-primary/90 transition-all">
+        <Button
+          className="mt-4 flex items-center justify-center gap-2 rounded-xl group bg-primary text-white hover:bg-primary/90 transition-all"
+          disabled={!paidUser && historyList.length >= 1}
+        >
           <IconPlus
             size={18}
             className="transition-transform duration-200 group-hover:rotate-90"

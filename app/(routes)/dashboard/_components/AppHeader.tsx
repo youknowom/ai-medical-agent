@@ -4,9 +4,9 @@ import Link from "next/link";
 import React from "react";
 
 const menuOptions = [
-  { id: 1, name: "Home", path: "/home" },
-  { id: 2, name: "History", path: "/history" },
-  { id: 3, name: "Pricing", path: "/pricing" },
+  { id: 1, name: "Home", path: "/dashboard" },
+  { id: 2, name: "History", path: "/dashboard/history" },
+  { id: 3, name: "Billing", path: "/dashboard/billing" },
   { id: 4, name: "Profile", path: "/profile" },
 ];
 
@@ -31,8 +31,8 @@ function AppHeader() {
 
       {/* Nav Menu */}
       <div className="hidden md:flex gap-12 items-center">
-        {menuOptions.map((option) => (
-          <Link key={option.id} href={option.path}>
+        {menuOptions.map((option, index) => (
+          <Link key={index} href={option.path}>
             <h2 className="hover:font-bold cursor-pointer transition-all">
               {option.name}
             </h2>
