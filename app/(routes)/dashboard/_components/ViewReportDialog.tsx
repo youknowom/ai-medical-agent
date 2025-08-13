@@ -8,7 +8,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { SessionDetail } from "../medical-agent/[sessionId]/page";
+// import { SessionDetail } from "../medical-agent/[sessionId]/page";
+import { SessionDetail } from "@/types/session";
 import moment from "moment";
 import jsPDF from "jspdf";
 import { DoctorAgent } from "./DoctorAgentCard";

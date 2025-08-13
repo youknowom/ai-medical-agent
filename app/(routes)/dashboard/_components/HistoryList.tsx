@@ -6,8 +6,8 @@ import React, { useEffect, useState } from "react";
 import AddNewSessionDialog from "./AddNewSessionDialog";
 import axios from "axios";
 import HistoryTable from "./HistoryTable";
-import { SessionDetail } from "../medical-agent/[sessionId]/page";
-
+// import { SessionDetail } from "../medical-agent/[sessionId]/page";
+import { SessionDetail } from "@/types/session";
 const HistoryList = () => {
   const [historyList, setHistoryList] = useState<SessionDetail[]>([]);
 

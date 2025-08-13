@@ -7,7 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SessionDetail } from "../medical-agent/[sessionId]/page";
+// import { SessionDetail } from "../medical-agent/[sessionId]/page";
+import { SessionDetail } from "@/types/session";
 import { Button } from "@/components/ui/button";
 import moment from "moment";
 import { DoctorAgent } from "./DoctorAgentCard";
