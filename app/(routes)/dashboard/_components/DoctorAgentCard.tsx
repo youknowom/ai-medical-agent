@@ -1,11 +1,12 @@
-"user client";
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import { IconArrowRight } from "@tabler/icons-react";
 import axios from "axios";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -29,6 +30,7 @@ function DoctorAgentCard({ doctorAgent }: Props) {
   const paidUser = has && has({ plan: "pro" });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
   const onStartConsultation = async () => {
     setLoading(true);
     try {
@@ -41,7 +43,6 @@ function DoctorAgentCard({ doctorAgent }: Props) {
         throw new Error("No session ID returned");
       }
 
-      // Redirect to the new session
       router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
     } catch (error) {
       console.error("❌ Failed to start session:", error);
@@ -50,6 +51,7 @@ function DoctorAgentCard({ doctorAgent }: Props) {
       setLoading(false);
     }
   };
+
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-lg w-full sm:max-w-sm mx-auto">
       {/* Image section */}
