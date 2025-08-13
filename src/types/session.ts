@@ -1,5 +1,13 @@
 // /types/session.ts
-import { DoctorAgent } from "@/app/(routes)/dashboard/_components/DoctorAgentCard";
+type DoctorAgent = {
+  id: number;
+  specialist: string;
+  description: string;
+  image: string;
+  voiceId?: string;
+  agentPrompt: string;
+  subscriptionRequired: boolean;
+};
 
 export type SessionDetail = {
   id: number;
@@ -9,8 +17,4 @@ export type SessionDetail = {
   selectedDoctor: DoctorAgent;
   createdOn: string;
 };
-
-export type Message = {
-  role: string;
-  text: string;
-};
+// ... rest of your types
