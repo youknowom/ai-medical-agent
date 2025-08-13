@@ -1,5 +1,4 @@
-// /types/session.ts
-import { DoctorAgent } from "@/app/(routes)/dashboard/_components/DoctorAgentCard";
+import { DoctorAgent } from "../app/(routes)/dashboard/_components/DoctorAgentCard";
 
 export type SessionDetail = {
   id: number;
