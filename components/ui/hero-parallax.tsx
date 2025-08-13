@@ -105,7 +105,7 @@ export const Header = () => {
       <h1 className="text-2xl md:text-7xl font-bold dark:text-white">
         Your AI <br /> Medical Assistant
       </h1>
-      <p className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200">
+      <p className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200 text-center mx-auto">
         We provide intelligent healthcare solutions powered by AI. Our system
         helps patients and doctors make faster, smarter, and more accurate
         medical decisions with cutting-edge technology.

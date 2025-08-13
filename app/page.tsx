@@ -15,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { HeroParallax } from "@/components/ui/hero-parallax";
+import { StickyBanner } from "@/components/ui/sticky-banner";
+import { TracingBeam } from "@/components/ui/tracing-beam";
 
 function useIsClient() {
   const [isClient, setIsClient] = useState(false);
@@ -25,13 +27,7 @@ function useIsClient() {
 export default function Home() {
   const isClient = useIsClient();
   const { user } = useUser();
-
-  const carouselImages = [
-    "/splash.png",
-    "/splash2.png",
-    "/splash3.png",
-    "/splash4.png",
-  ];
+  const [showBanner, setShowBanner] = useState(true);
 
   const products = [
     { title: "Moonbeam", link: "#", thumbnail: "/splash.png" },
@@ -48,13 +44,47 @@ export default function Home() {
 
   return (
     <div className="relative my-10 flex flex-col items-center justify-center">
+      {/* Navbar */}
       <Navbar user={user} />
+
+      {/* Sticky Banner */}
+      {showBanner && (
+        <StickyBanner className="mt-14">
+          <div className="relative mx-auto w-full max-w-4xl px-6 py-3 bg-red-400 text-white rounded-xl shadow-md">
+            <motion.span
+              className="absolute left-4 top-1/2 -translate-y-1/2"
+              animate={{ y: [0, -5, 0] }}
+              transition={{ repeat: Infinity, duration: 0.8 }}
+            >
+              🎁
+            </motion.span>
+
+            <span className="block text-center text-sm md:text-base">
+              Get your first medical report free! Sign up now to avail.
+            </span>
+
+            <Link href="/offers">
+              <button className="absolute right-20 top-1/2 -translate-y-1/2 rounded-lg bg-white text-gray-600 px-4 py-1 font-medium hover:bg-gray-100">
+                Learn More
+              </button>
+            </Link>
+
+            <button
+              onClick={() => setShowBanner(false)}
+              className="absolute top-2 right-2 text-white hover:text-gray-200"
+            >
+              ✖
+            </button>
+          </div>
+        </StickyBanner>
+      )}
 
       {/* Side & bottom borders */}
       <div className="absolute inset-y-0 left-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80" />
       <div className="absolute inset-y-0 right-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80" />
       <div className="absolute inset-x-0 bottom-0 h-px w-full bg-neutral-200/80 dark:bg-neutral-800/80" />
 
+      {/* Main Content */}
       <div className="px-4 py-10 md:py-20 text-center w-full max-w-6xl">
         {/* Heading */}
         <h1 className="relative z-10 mx-auto max-w-4xl text-2xl font-bold text-slate-700 md:text-4xl lg:text-7xl dark:text-slate-300">
@@ -133,7 +163,7 @@ export default function Home() {
                     >
                       <div className="relative w-full h-full">
                         <Image
-                          src={product.thumbnail} // use thumbnail string
+                          src={product.thumbnail}
                           alt={product.title}
                           fill
                           className="object-cover rounded-2xl"
@@ -153,6 +183,16 @@ export default function Home() {
         {/* Hero Parallax Section */}
         <div className="mt-20 w-full">
           <HeroParallax products={products} />
+        </div>
+
+        {/* Tracing Beam Section */}
+        {/* Tracing Beam Section */}
+        <div className="mt-20 w-full">
+          <TracingBeam className="bg-gray-900 text-white py-10 rounded-2xl shadow-lg">
+            <div className="text-center text-xl md:text-2xl font-semibold">
+              🚀 Explore our AI-powered medical insights!
+            </div>
+          </TracingBeam>
         </div>
       </div>
     </div>
@@ -187,7 +227,10 @@ const Navbar = ({ user }: { user: any }) => {
         <div className="flex items-center gap-5">
           <UserButton />
           <Link href="/dashboard">
-            <button className="rounded-lg bg-blue-600 px-4 py-2 text-white dark:bg-blue-500">
+            <button
+              className="rounded-lg bg-black
+            -600 px-4 py-2 text-white dark:bg-blue-500"
+            >
               Dashboard
             </button>
           </Link>
