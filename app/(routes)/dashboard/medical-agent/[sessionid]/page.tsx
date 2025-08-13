@@ -7,20 +7,21 @@ import Vapi from "@vapi-ai/web";
 import { Circle, PhoneCall, PhoneOff, RotateCcw } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { SessionDetail, Message } from "@/types/session";
 
-export type SessionDetail = {
-  id: number;
-  notes: string;
-  sessionId: string;
-  report: object;
-  selectedDoctor: DoctorAgent;
-  createdOn: string;
-};
+// export type SessionDetail = {
+//   id: number;
+//   notes: string;
+//   sessionId: string;
+//   report: object;
+//   selectedDoctor: DoctorAgent;
+//   createdOn: string;
+// };
 
-type Message = {
-  role: string;
-  text: string;
-};
+// type Message = {
+//   role: string;
+//   text: string;
+// };
 
 function MedicalVoiceAgentPage() {
   const params = useParams();

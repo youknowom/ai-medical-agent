@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useUser, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
@@ -29,6 +29,12 @@ export default function Home() {
   const { user } = useUser();
   const [showBanner, setShowBanner] = useState(true);
 
+  // Auto-hide after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowBanner(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const products = [
     { title: "Moonbeam", link: "#", thumbnail: "/splash.png" },
     { title: "Sunflare", link: "#", thumbnail: "/splash2.png" },
@@ -47,37 +53,42 @@ export default function Home() {
       {/* Navbar */}
       <Navbar user={user} />
 
-      {/* Sticky Banner */}
-      {showBanner && (
-        <StickyBanner className="mt-14">
-          <div className="relative mx-auto w-full max-w-4xl px-6 py-3 bg-red-400 text-white rounded-xl shadow-md">
-            <motion.span
-              className="absolute left-4 top-1/2 -translate-y-1/2"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ repeat: Infinity, duration: 0.8 }}
-            >
-              🎁
-            </motion.span>
+      {/* Sticky Banner with fade-out */}
+      <AnimatePresence>
+        {showBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <StickyBanner className="mt-14 w-full">
+              <div className="relative w-full bg-red-500 text-white shadow-lg rounded-xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                {/* Icon + Text */}
+                <div className="flex items-center gap-3 text-center md:text-left">
+                  <motion.span
+                    className="text-2xl"
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ repeat: Infinity, duration: 0.8 }}
+                  >
+                    🎁
+                  </motion.span>
+                  <span className="text-sm md:text-base font-medium">
+                    Get your first medical report free! Sign up now to avail.
+                  </span>
+                </div>
 
-            <span className="block text-center text-sm md:text-base">
-              Get your first medical report free! Sign up now to avail.
-            </span>
-
-            <Link href="/offers">
-              <button className="absolute right-20 top-1/2 -translate-y-1/2 rounded-lg bg-white text-gray-600 px-4 py-1 font-medium hover:bg-gray-100">
-                Learn More
-              </button>
-            </Link>
-
-            <button
-              onClick={() => setShowBanner(false)}
-              className="absolute top-2 right-2 text-white hover:text-gray-200"
-            >
-              ✖
-            </button>
-          </div>
-        </StickyBanner>
-      )}
+                {/* Button */}
+                <Link href="/offers">
+                  <button className="rounded-lg bg-white text-gray-700 px-5 py-2 text-sm md:text-base font-medium shadow-sm hover:bg-gray-100 transition">
+                    Learn More
+                  </button>
+                </Link>
+              </div>
+            </StickyBanner>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Side & bottom borders */}
       <div className="absolute inset-y-0 left-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80" />
@@ -186,7 +197,6 @@ export default function Home() {
         </div>
 
         {/* Tracing Beam Section */}
-        {/* Tracing Beam Section */}
         <div className="mt-20 w-full">
           <TracingBeam className="bg-gray-900 text-white py-10 rounded-2xl shadow-lg">
             <div className="text-center text-xl md:text-2xl font-semibold">
@@ -227,10 +237,7 @@ const Navbar = ({ user }: { user: any }) => {
         <div className="flex items-center gap-5">
           <UserButton />
           <Link href="/dashboard">
-            <button
-              className="rounded-lg bg-black
-            -600 px-4 py-2 text-white dark:bg-blue-500"
-            >
+            <button className="rounded-lg bg-black px-4 py-2 text-white dark:bg-blue-500">
               Dashboard
             </button>
           </Link>
