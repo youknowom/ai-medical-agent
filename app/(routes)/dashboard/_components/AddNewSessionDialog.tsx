@@ -20,8 +20,8 @@ import { toast } from "sonner";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { SessionDetail } from "../medical-agent/[sessionId]/page";
-
+// import { SessionDetail } from "../medical-agent/[sessionId]/page";
+import { SessionDetail } from "@/app/(routes)/dashboard/medical-agent/[sessionId]/page";
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState(false);
