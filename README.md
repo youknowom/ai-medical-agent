@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🏥 AI Medical Agent
 
-## Getting Started
+An AI-powered Diagnostic Assistant built with Next.js.
+This project helps simulate conversations between patients and a virtual medical assistant. It collects symptoms, provides possible insights, and guides toward further medical attention.
 
-First, run the development server:
+⚠️ Disclaimer: This tool is for educational and experimental purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical concerns.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🤖 AI-driven symptom-based conversation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+📋 Step-by-step questioning to narrow down conditions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🧠 Context-aware responses
 
-## Learn More
+🌐 Built on Next.js + TypeScript
 
-To learn more about Next.js, take a look at the following resources:
+⚡ Lightweight and extendable codebase
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Next.js
+ – Frontend framework
 
-## Deploy on Vercel
+TypeScript
+ – Type safety
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+React Context API
+ – State management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[OpenAI API / LLMs] – For medical dialog generation
