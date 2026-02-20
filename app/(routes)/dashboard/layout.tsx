@@ -7,9 +7,11 @@ const DashboardLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <div>
+    <div className="min-h-screen" style={{ background: "#F2F2EF" }}>
       <AppHeader />
-      <div className="px-10 md:px-20 lg:px-40 py-10">{children}</div>
+      <main className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-10 max-w-6xl">
+        {children}
+      </main>
     </div>
   );
 };

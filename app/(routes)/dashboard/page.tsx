@@ -1,17 +1,27 @@
 import React from "react";
-import HistoryList from "./_components/HistoryList";
-import { Button } from "@/components/ui/button";
 import DoctorsAgentList from "./_components/DoctorsAgentList";
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
+import MLFeaturesGrid from "./_components/MLFeaturesGrid";
+import HistoryList from "./_components/HistoryList";
 
 const Dashboard = () => {
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <h2 className="font-bold text-2xl">My Dashboard</h2>
+    <div className="w-full">
+      {/* Page header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-12">
+
         <AddNewSessionDialog />
       </div>
-      <HistoryList />
+
+      {/* AI Feature Cards */}
+      <MLFeaturesGrid />
+
+      {/* History */}
+      <div className="mt-16">
+        <HistoryList />
+      </div>
+
+      {/* Doctor Agents */}
       <DoctorsAgentList />
     </div>
   );

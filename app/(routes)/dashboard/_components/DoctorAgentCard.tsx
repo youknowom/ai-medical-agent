@@ -1,9 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
-import { IconArrowRight } from "@tabler/icons-react";
+import { ArrowRight } from "lucide-react";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -39,10 +37,7 @@ function DoctorAgentCard({ doctorAgent }: Props) {
         selectedDoctor: doctorAgent,
       });
 
-      if (!result.data?.sessionId) {
-        throw new Error("No session ID returned");
-      }
-
+      if (!result.data?.sessionId) throw new Error("No session ID returned");
       router.push(`/dashboard/medical-agent/${result.data.sessionId}`);
     } catch (error) {
       console.error("❌ Failed to start session:", error);
@@ -52,40 +47,63 @@ function DoctorAgentCard({ doctorAgent }: Props) {
     }
   };
 
+  const isLocked = !paidUser && doctorAgent.subscriptionRequired;
+
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-lg w-full sm:max-w-sm mx-auto">
-      {/* Image section */}
-      <div className="relative w-full h-[200px]">
+    <div
+      className="group rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+      style={{
+        background: "#EAEAE7",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05)",
+      }}
+    >
+      {/* Doctor image */}
+      <div className="relative w-full h-48 overflow-hidden">
         {doctorAgent.subscriptionRequired && (
-          <Badge className="absolute m-2 right-0 z-10 bg-red-500 text-white shadow-md">
+          <span
+            className="absolute top-3 right-3 z-10 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
+            style={{ background: "#111", color: "#fff" }}
+          >
             Premium
-          </Badge>
+          </span>
         )}
         <Image
           src={doctorAgent.image}
           alt={doctorAgent.specialist}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
-          className="object-cover rounded-t-xl"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
 
-      {/* Content section */}
-      <div className="p-3 md:p-4">
-        <h2 className="font-semibold text-base md:text-lg text-gray-800">
+      {/* Content */}
+      <div className="p-5">
+        <h3 className="font-semibold text-neutral-900 text-sm mb-1 tracking-tight">
           {doctorAgent.specialist}
-        </h2>
-        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+        </h3>
+        <p className="text-xs text-neutral-500 line-clamp-2 mb-5 leading-relaxed">
           {doctorAgent.description}
         </p>
-        <Button
+
+        <button
           onClick={onStartConsultation}
-          className="mt-4 w-full flex justify-between items-center group rounded-xl"
-          disabled={!paidUser && doctorAgent.subscriptionRequired}
+          disabled={isLocked || loading}
+          className="w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200"
+          style={
+            isLocked
+              ? { background: "rgba(0,0,0,0.06)", color: "#aaa", cursor: "not-allowed" }
+              : {
+                background: "#111",
+                color: "#fff",
+                boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.12)",
+              }
+          }
         >
-          <span>Start Consultation</span>
-          <IconArrowRight className="group-hover:translate-x-1 transition-transform duration-200" />
-        </Button>
+          <span>{loading ? "Starting…" : isLocked ? "Premium Only" : "Start Consultation"}</span>
+          {!isLocked && (
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          )}
+        </button>
       </div>
     </div>
   );

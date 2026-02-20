@@ -236,7 +236,7 @@ function MedicalVoiceAgentPage() {
   }
 
   return (
-    <div className="relative overflow-hidden p-5 rounded-3xl bg-gray transition-all duration-700 border">
+    <div className="relative overflow-hidden p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gray transition-all duration-700 border">
       {callStarted && (
         <div className="absolute inset-0 bg-green-200 opacity-20 animate-pulse pointer-events-none z-0" />
       )}
@@ -245,47 +245,46 @@ function MedicalVoiceAgentPage() {
       )}
 
       <div className="relative z-10">
-        <div className="flex justify-between items-center">
-          <h2 className="p-1 px-2 border rounded-md flex gap-2 items-center">
-            <Circle className={`h-4 w-4 rounded-full ${getStatusColor()}`} />
+        <div className="flex justify-between items-center flex-wrap gap-2">
+          <h2 className="p-1 px-2 border rounded-md flex gap-2 items-center text-sm sm:text-base">
+            <Circle className={`h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full ${getStatusColor()}`} />
             {isConnecting
               ? "Connecting..."
               : callStarted
-              ? "Connected"
-              : "Not Connected"}
+                ? "Connected"
+                : "Not Connected"}
           </h2>
-          <h2 className="font-bold text-xl text-gray-400">
+          <h2 className="font-bold text-lg sm:text-xl text-gray-400">
             {formatTime(callDuration)}
           </h2>
         </div>
 
         {sessionDetails && (
-          <div className="flex items-center flex-col mt-10">
+          <div className="flex items-center flex-col mt-6 sm:mt-10">
             <Image
               src={sessionDetails.selectedDoctor.image}
               alt={sessionDetails.selectedDoctor.description}
               width={120}
               height={120}
-              className="h-[100px] w-[100px] object-cover rounded-full"
+              className="h-[80px] w-[80px] sm:h-[100px] sm:w-[100px] object-cover rounded-full"
               priority
             />
-            <h2 className="mt-2 text-lg">
+            <h2 className="mt-2 text-base sm:text-lg">
               {sessionDetails.selectedDoctor.specialist}
             </h2>
-            <p className="text-sm text-gray-400">AI Medical Doctor</p>
+            <p className="text-xs sm:text-sm text-gray-400">AI Medical Doctor</p>
 
             <div
               ref={chatRef}
-              className="mt-12 px-4 w-full h-[260px] md:h-[300px] flex flex-col justify-end overflow-y-auto border rounded-xl bg-white text-black"
+              className="mt-8 sm:mt-12 px-3 sm:px-4 w-full h-[200px] sm:h-[260px] md:h-[300px] flex flex-col justify-end overflow-y-auto border rounded-xl bg-white text-black"
             >
               {messages.slice(-4).map((msg, index) => (
                 <div
                   key={index}
-                  className={`p-3 m-1 rounded-lg max-w-[80%] shadow-sm ${
-                    msg.role === "user"
+                  className={`p-3 m-1 rounded-lg max-w-[80%] shadow-sm ${msg.role === "user"
                       ? "bg-blue-100 self-end text-black"
                       : "bg-gray-100 self-start text-black"
-                  }`}
+                    }`}
                 >
                   <strong className="block text-sm text-gray-500">
                     {msg.role === "user" ? "You" : "Doctor"}
@@ -296,11 +295,10 @@ function MedicalVoiceAgentPage() {
 
               {liveTranscript && (
                 <div
-                  className={`p-3 m-1 rounded-lg max-w-[80%] italic animate-pulse shadow ${
-                    currentRole === "user"
+                  className={`p-3 m-1 rounded-lg max-w-[80%] italic animate-pulse shadow ${currentRole === "user"
                       ? "bg-blue-200 self-end text-black"
                       : "bg-green-100 self-start text-black"
-                  }`}
+                    }`}
                 >
                   {currentRole === "user" ? "You" : "Doctor"}: {liveTranscript}
                 </div>
@@ -309,7 +307,7 @@ function MedicalVoiceAgentPage() {
 
             {!callStarted ? (
               <Button
-                className="mt-10 cursor-pointer"
+                className="mt-7 sm:mt-10 cursor-pointer w-full sm:w-auto"
                 onClick={startCall}
                 disabled={isLoading || isConnecting}
               >
@@ -319,7 +317,7 @@ function MedicalVoiceAgentPage() {
             ) : (
               <Button
                 variant="destructive"
-                className="mt-10 cursor-pointer"
+                className="mt-7 sm:mt-10 cursor-pointer w-full sm:w-auto"
                 onClick={endCall}
               >
                 <PhoneOff className="mr-2 animate-vibrate" />

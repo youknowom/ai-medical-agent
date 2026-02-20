@@ -18,3 +18,7 @@ export type SessionDetail = {
   createdOn: string;
 };
 // ... rest of your types
+export type Message = {
+  role: string;
+  text: string;
+};
