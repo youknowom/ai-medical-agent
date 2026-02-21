@@ -43,23 +43,31 @@ function MedicalVoiceAgentPage() {
   const chatRef = useRef<HTMLDivElement>(null);
   const callStartSound = useRef<HTMLAudioElement | null>(null);
   const callEndSound = useRef<HTMLAudioElement | null>(null);
+  // Use a ref for Vapi so cleanup always has the latest instance (avoids stale closure)
+  const vapiRef = useRef<any>(null);
 
   useEffect(() => {
     if (sessionId) getSessionDetails();
 
-    callStartSound.current = new Audio("/call-start.wav");
-    callEndSound.current = new Audio("/call-end.wav");
-    callStartSound.current.volume = 0.7;
-    callEndSound.current.volume = 0.7;
+    // Only create Audio objects in the browser
+    if (typeof window !== "undefined") {
+      callStartSound.current = new Audio("/call-start.wav");
+      callEndSound.current = new Audio("/call-end.wav");
+      callStartSound.current.volume = 0.7;
+      callEndSound.current.volume = 0.7;
+    }
 
     return () => {
-      callStartSound.current?.remove();
-      callEndSound.current?.remove();
-      if (vapiInstance) {
-        vapiInstance.stop();
-        vapiInstance.removeAllListeners?.();
+      // Use ref (not state) to avoid stale closure
+      if (vapiRef.current) {
+        vapiRef.current.stop();
+        vapiRef.current.removeAllListeners?.();
+        vapiRef.current = null;
       }
       if (timerRef.current) clearInterval(timerRef.current);
+      // Pause audio before releasing to avoid memory leak
+      callStartSound.current?.pause();
+      callEndSound.current?.pause();
     };
   }, [sessionId]);
 
@@ -127,7 +135,7 @@ function MedicalVoiceAgentPage() {
       },
       model: {
         provider: "openai",
-        model: "gpt-5",
+        model: "gpt-4o", // gpt-5 does not exist
         messages: [
           {
             role: "system",
@@ -183,8 +191,10 @@ function MedicalVoiceAgentPage() {
         endCall();
       });
 
-      //@ts-ignore
-      const call = await vapi.start(VapiAgentConfig);
+      const call = await vapi.start(VapiAgentConfig as any);
+      // Keep ref in sync
+      vapiRef.current = vapi;
+      setVapiInstance(vapi);
       if (!call) throw new Error("Failed to initialize call");
     } catch (error: any) {
       console.error("Error during call start:", error);
@@ -195,14 +205,16 @@ function MedicalVoiceAgentPage() {
   };
 
   const endCall = () => {
-    if (!vapiInstance) return;
+    const vapi = vapiRef.current || vapiInstance;
+    if (!vapi) return;
     try {
-      vapiInstance.stop();
-      callEndSound.current?.play();
+      vapi.stop();
+      callEndSound.current?.play().catch(() => { });
       if (timerRef.current) clearInterval(timerRef.current);
       setCallDuration(0);
       setCallStarted(false);
       setCallEnded(true);
+      vapiRef.current = null;
       setTimeout(() => {
         setCallEnded(false);
         setVapiInstance(null);
@@ -282,8 +294,8 @@ function MedicalVoiceAgentPage() {
                 <div
                   key={index}
                   className={`p-3 m-1 rounded-lg max-w-[80%] shadow-sm ${msg.role === "user"
-                      ? "bg-blue-100 self-end text-black"
-                      : "bg-gray-100 self-start text-black"
+                    ? "bg-blue-100 self-end text-black"
+                    : "bg-gray-100 self-start text-black"
                     }`}
                 >
                   <strong className="block text-sm text-gray-500">
@@ -296,8 +308,8 @@ function MedicalVoiceAgentPage() {
               {liveTranscript && (
                 <div
                   className={`p-3 m-1 rounded-lg max-w-[80%] italic animate-pulse shadow ${currentRole === "user"
-                      ? "bg-blue-200 self-end text-black"
-                      : "bg-green-100 self-start text-black"
+                    ? "bg-blue-200 self-end text-black"
+                    : "bg-green-100 self-start text-black"
                     }`}
                 >
                   {currentRole === "user" ? "You" : "Doctor"}: {liveTranscript}

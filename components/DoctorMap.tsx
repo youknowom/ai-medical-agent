@@ -60,8 +60,8 @@ function MapController({ selected }: { selected: Doctor | null }) {
     return null;
 }
 
-// ── Types (local) ─────────────────────────────────────────────────────────────
-type Doctor = {
+// ── Types ─────────────────────────────────────────────────────────────────────
+export type Doctor = {
     id: string | number;
     name: string;
     specialty: string;
@@ -71,7 +71,18 @@ type Doctor = {
     lng?: number;
     available: boolean;
     distance: string;
+    distanceNum: number;
     rating: number;
+    // Extended fields used in near-me page
+    reviews?: number;
+    nextSlot?: string;
+    experience?: string;
+    fee?: string;
+    avatar?: string;
+    avatarBg?: string;
+    tagBg?: string;
+    verified?: boolean;
+    languages?: string[];
 };
 
 type Props = {

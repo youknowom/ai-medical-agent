@@ -13,23 +13,11 @@ export type UserDetail = {
 function Provider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const [UserDetail, setUserDetail] = useState<any>();
-  // useEffect(() => {
-  //   const createUser = async () => {
-  //     try {
-  //       const response = await axios.post("/api/users");
-  //       console.log("✅ User from API:", response.data);
-  //     } catch (error) {
-  //       console.error("❌ Error creating user:", error);
-  //     }
-  //   };
 
-  //   if (isLoaded && user) {
-  //     createUser();
-  //   }
-  // }, [isLoaded, user]);
   useEffect(() => {
     user && CreateNewUser();
   }, [user]);
+
   const CreateNewUser = async () => {
     const result = await axios.post("/api/users");
     console.log(result.data);

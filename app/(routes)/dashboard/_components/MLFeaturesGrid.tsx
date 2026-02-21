@@ -101,8 +101,8 @@ function FeatureCard({
                 <div
                     className="h-full rounded-[1.10rem] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                     style={{
-                        background: "#EAEAE7",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05)",
+                        background: "#f0fdf4",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(22,163,74,0.12)",
                     }}
                 >
                     {/* Graphic top panel */}
@@ -152,8 +152,16 @@ function FeatureCard({
                         </ul>
 
                         {/* CTA */}
-                        <div className="flex items-center gap-1.5 text-sm font-semibold text-neutral-900 group-hover:gap-2.5 transition-all duration-200 mt-auto">
-                            Try now <ArrowRight className="w-4 h-4" />
+                        <div className="mt-auto">
+                            <span
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold transition-all duration-200 group-hover:opacity-90 group-hover:scale-[1.03]"
+                                style={{
+                                    background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+                                    boxShadow: "0 2px 8px rgba(22,163,74,0.35), inset 0 0 0 1px rgba(255,255,255,0.15)",
+                                }}
+                            >
+                                Try now <ArrowRight className="w-4 h-4" />
+                            </span>
                         </div>
                     </div>
                 </div>

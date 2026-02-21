@@ -34,9 +34,9 @@ function AppHeader() {
     <header
       className="sticky top-0 z-50 w-full transition-all duration-300"
       style={{
-        background: scrolled || menuOpen ? "rgba(242,242,239,0.95)" : "rgba(242,242,239,0.75)",
+        background: scrolled || menuOpen ? "rgba(240,253,244,0.97)" : "rgba(240,253,244,0.75)",
         backdropFilter: "blur(16px)",
-        borderBottom: scrolled || menuOpen ? "1px solid rgba(0,0,0,0.07)" : "1px solid transparent",
+        borderBottom: scrolled || menuOpen ? "1px solid rgba(22,163,74,0.12)" : "1px solid transparent",
       }}
     >
       <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-6xl">

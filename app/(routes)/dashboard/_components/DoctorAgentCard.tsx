@@ -53,8 +53,8 @@ function DoctorAgentCard({ doctorAgent }: Props) {
     <div
       className="group rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
       style={{
-        background: "#EAEAE7",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05)",
+        background: "#f0fdf4",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(22,163,74,0.1)",
       }}
     >
       {/* Doctor image */}

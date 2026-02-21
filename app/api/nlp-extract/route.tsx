@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       // fallback: try to extract array from text
       const content = data.choices?.[0]?.message?.content || "";
-      const match = content.match(/\[.*\]/s);
+      const match = content.match(/\[[\s\S]*\]/);
       if (match) {
         try {
           entities = JSON.parse(match[0]);
