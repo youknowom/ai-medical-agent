@@ -34,7 +34,7 @@ export default function Billing() {
                 </p>
                 <div className="space-y-2">
                   {[
-                    "Unlimited access to all 5 ML features",
+                    "Unlimited access to all 3 ML features",
                     "Consultations with all 10 specialist doctors",
                     "No credit card required",
                     "Full API access for research purposes",
